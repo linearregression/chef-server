@@ -18,13 +18,19 @@
 %% under the License.
 %%
 
-
 -module(oc_chef_authz_acl_constraints).
+
+-ifdef(TEST).
+-compile([export_all]).
+-endif.
 
 -export([check_acl_constraints/4]).
 
 check_acl_constraints(AuthzId, Type, AclPerm, Ace) ->
-  case lists:filtermap(fun(Check) -> apply_check(Check, AuthzId, Type, AclPerm, Ace) end, acl_checks()) of
+  check_acl_constraints(AuthzId, Type, AclPerm, Ace, acl_checks()).
+
+check_acl_constraints(AuthzId, Type, AclPerm, Ace, AclChecks) ->
+  case lists:filtermap(fun(Check) -> Check(AuthzId, Type, AclPerm, Ace) end, AclChecks) of
     [] ->
       ok;
     Failures ->
@@ -35,9 +41,6 @@ acl_checks() ->
   [
     fun check_admin_group_removal_from_grant_ace/4
   ].
-
-apply_check(Check, AuthzId, Type, AclPerm, Ace) ->
-  Check(AuthzId, Type, AclPerm, Ace).
 
 check_admin_group_removal_from_grant_ace(AuthzId, Type, AclPerm, NewAce) ->
   %% It is necessary to pull the current ace and compare to the new ace.
