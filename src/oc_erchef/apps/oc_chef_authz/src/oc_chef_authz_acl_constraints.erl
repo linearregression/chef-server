@@ -39,10 +39,10 @@ check_acl_constraints(AuthzId, Type, AclPerm, Ace, AclChecks) ->
 
 acl_checks() ->
   [
-    fun check_admin_group_removal_from_grant_ace/4
+    fun check_admins_group_removal_from_grant_ace/4
   ].
 
-check_admin_group_removal_from_grant_ace(AuthzId, Type, AclPerm, NewAce) ->
+check_admins_group_removal_from_grant_ace(AuthzId, Type, AclPerm, NewAce) ->
   %% It is necessary to pull the current ace and compare to the new ace.
   %% This is because there are some groups that don't have the admin
   %% group by default, such as billing-admins. This will have the effect
@@ -53,7 +53,7 @@ check_admin_group_removal_from_grant_ace(AuthzId, Type, AclPerm, NewAce) ->
       NewGroups = extract_acl_groups(AclPerm, NewAce),
       CurrentAce = oc_chef_authz_acl:fetch(Type, AuthzId),
       CurrentGroups = extract_acl_groups(AclPerm, CurrentAce),
-      case check_admin_group_removal(CurrentGroups, NewGroups) of
+      case check_admins_group_removal(CurrentGroups, NewGroups) of
         not_removed ->
           false;
         removed ->
@@ -63,15 +63,15 @@ check_admin_group_removal_from_grant_ace(AuthzId, Type, AclPerm, NewAce) ->
       ok
   end.
 
-check_admin_group_removal(CurrentGroups, NewGroups) ->
+check_admins_group_removal(CurrentGroups, NewGroups) ->
   %% Check if the CurrentGroups contains the admin group. If it doesn't, there
   %% is nothing to do. If it does, then check if the admin group is present in
   %% the new group.
-  case contains_admin_group(CurrentGroups) of
+  case contains_admins_group(CurrentGroups) of
     false ->
       not_removed;
     true ->
-      case contains_admin_group(NewGroups) of
+      case contains_admins_group(NewGroups) of
         true ->
           not_removed;
         false ->
@@ -79,7 +79,7 @@ check_admin_group_removal(CurrentGroups, NewGroups) ->
       end
   end.
 
-contains_admin_group(Groups) ->
+contains_admins_group(Groups) ->
   case lists:filter(fun(X) -> X =:= <<"admins">> end, Groups) of
     [] ->
         false;

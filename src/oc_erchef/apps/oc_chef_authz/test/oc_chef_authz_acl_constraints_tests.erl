@@ -26,48 +26,48 @@
 %% Test generators that setup and run the tests
 oc_chef_authz_acl_constraints_test_() ->
   [
-    { "Reports that admins group is found", contains_admin_group_true() },
-    { "Reports that admins group is not found", contains_admin_group_false() },
-    { "Check admin group removal returns admins group was not removed", check_admin_group_removal_not_removed() },
-    { "Check admin group removal returns admins group was removed", check_admin_group_removal_removed() },
+    { "Reports that admins group is found", contains_admins_group_true() },
+    { "Reports that admins group is not found", contains_admins_group_false() },
+    { "Check admins group removal returns admins group was not removed", check_admins_group_removal_not_removed() },
+    { "Check admins group removal returns admins group was removed", check_admins_group_removal_removed() },
     { "Check that the acl constraints reports no failures when there should be none", check_acl_constraints_no_failures() },
     { "Check that the acl constraints reports failures when they are present", check_acl_constraints_failures() }
   ].
 
 
-%% contains_admin_group tests
-contains_admin_group_true() ->
+%% contains_admins_group tests
+contains_admins_group_true() ->
   [
-    ?_assertEqual(true, oc_chef_authz_acl_constraints:contains_admin_group([<<"admins">>])),
-    ?_assertEqual(true, oc_chef_authz_acl_constraints:contains_admin_group([<<"admins">>, <<"another_group">>]))
+    ?_assertEqual(true, oc_chef_authz_acl_constraints:contains_admins_group([<<"admins">>])),
+    ?_assertEqual(true, oc_chef_authz_acl_constraints:contains_admins_group([<<"admins">>, <<"another_group">>]))
   ].
 
-contains_admin_group_false() ->
+contains_admins_group_false() ->
   [
-    ?_assertEqual(false, oc_chef_authz_acl_constraints:contains_admin_group([])),
-    ?_assertEqual(false, oc_chef_authz_acl_constraints:contains_admin_group([<<"another_group">>]))
+    ?_assertEqual(false, oc_chef_authz_acl_constraints:contains_admins_group([])),
+    ?_assertEqual(false, oc_chef_authz_acl_constraints:contains_admins_group([<<"another_group">>]))
   ].
 
 
-%% check_admin_group_removal tests
-check_admin_group_removal_not_removed() ->
-  %% Not a true unit test, since it calls through to contains_admin_group,
+%% check_admins_group_removal tests
+check_admins_group_removal_not_removed() ->
+  %% Not a true unit test, since it calls through to contains_admins_group,
   %% but meck can't currently mock intra module calls.
   [
     %% CurrentGroup doesn't contain the admins group
-    ?_assertEqual(not_removed, oc_chef_authz_acl_constraints:check_admin_group_removal([], [])),
+    ?_assertEqual(not_removed, oc_chef_authz_acl_constraints:check_admins_group_removal([], [])),
     %% CurrentGroup doesn't contain the admins group, NewGroup does
-    ?_assertEqual(not_removed, oc_chef_authz_acl_constraints:check_admin_group_removal([], [<<"admins">>])),
-    %% CurrentGroup contains admins group, NewGroup also contains admin group
-    ?_assertEqual(not_removed, oc_chef_authz_acl_constraints:check_admin_group_removal([<<"admins">>], [<<"admins">>]))
+    ?_assertEqual(not_removed, oc_chef_authz_acl_constraints:check_admins_group_removal([], [<<"admins">>])),
+    %% CurrentGroup contains admins group, NewGroup also contains admins group
+    ?_assertEqual(not_removed, oc_chef_authz_acl_constraints:check_admins_group_removal([<<"admins">>], [<<"admins">>]))
   ].
 
-check_admin_group_removal_removed() ->
-  %% Not a true unit test, since it calls through to contains_admin_group,
+check_admins_group_removal_removed() ->
+  %% Not a true unit test, since it calls through to contains_admins_group,
   %% but meck can't currently mock intra module calls.
   [
     %% CurrentGroup contains the admins group, NewGroup does not
-    ?_assertEqual(removed, oc_chef_authz_acl_constraints:check_admin_group_removal([<<"admins">>], []))
+    ?_assertEqual(removed, oc_chef_authz_acl_constraints:check_admins_group_removal([<<"admins">>], []))
   ].
 
 %% check_acl_constraints tests
