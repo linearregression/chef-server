@@ -15,6 +15,9 @@ cache:
     - $HOME/.cpanm
     - $HOME/.cpan
     - $HOME/perl5
+    - src/oc_erchef/travis-erlang-R16B03-1.plt
+    - src/oc_erchef/deps.plt
+
 before_cache:
   # Prevent build log from changing cache cand causing repackage
   - rm -f $HOME/.cpanm/work/*/build.log
