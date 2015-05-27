@@ -426,7 +426,8 @@ is_authorized(Req, State) ->
         {false, ReqOther, StateOther} ->
             %% FIXME: the supported version is determined by the chef_authn application
             %% also, see: https://wiki.corp.chef.io/display/CORP/RFC+Authentication+Version+Negotiation
-            {"X-Ops-Sign version=\"1.0\" version=\"1.1\"", ReqOther, StateOther}
+            {"X-Ops-Sign version=\"1.0\" version=\"1.1\"", ReqOther, StateOther};
+        {{halt, _Code}, _Req, _State} = Halt -> Halt
     end.
 
 %% Clients are inherently a member of the org, but users are not.  For purposes of acl checks,
@@ -953,7 +954,7 @@ verify_request_signature(Req,
              State#base_state{log_msg = {not_found, user_or_client}}};
         {error, Error} ->
             Msg = verify_request_message(error_finding_user_or_client, Name, OrgName),
-            {false, wrq:set_resp_body(chef_json:encode(Msg), Req),
+            {{halt, 500}, wrq:set_resp_body(chef_json:encode(Msg), Req),
              State#base_state{log_msg = {error_finding_user_or_client, Error}}};
         Requestors ->
             %% If the request originated from the webui, we do authn using the webui public
