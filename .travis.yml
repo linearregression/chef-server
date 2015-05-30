@@ -22,6 +22,10 @@ before_cache:
 language: erlang
 otp_release:
   - R16B03-1
+  - 17.0
+  - 17.1
+  - 17.2
+  - 17.3
   - 17.4
   - 17.5
 
