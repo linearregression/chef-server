@@ -170,6 +170,7 @@ $(DEPS_PLT):
 endif
 
 $(BASE_PLT):
+
 ifeq ($(TRAVIS),true)
 		@echo "Attempting to download PLT: $(BASE_PLT_URL)."
 		-wget $(BASE_PLT_URL)
@@ -178,7 +179,7 @@ ifeq ($(TRAVIS),true)
 			echo "Downloaded PLT successfully to $(BASE_PLT)" ; \
 		else \
 			echo "Download failed. Please wait while a new PLT is compiled." ; \
-			$(DIALYZER) --build_plt --apps $(ERLANG_DIALYZER_APPS) --output_plt $(BASE_PLT) ; \
+			$(DIALYZER) --verbose --build_plt --apps $(ERLANG_DIALYZER_APPS) --output_plt $(BASE_PLT) ; \
 			echo "now try your build again" ; \
 		fi;
 
